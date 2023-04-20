@@ -4,6 +4,27 @@ import requests
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "3vVAToG1jRZVLBtLMDdyciN3z2jmpgen"
 
+
+def carOption(disallows_options):
+    while True:
+        choice = input(
+        "Do you want to avoid the limited access roads (highways) ?\n\
+        -\"y\" for yes\n\
+        -\"n\" for no\n")
+        if (choice == "y" or route_option == "n"):
+            break
+    if (choice == 'y'):
+        disallows_options.append("Limited Access")
+    while True:
+        choice = input(
+        "Do you want to avoid the toll road ?\n\
+        type \"y\" for yes or \"n\" for no\n")
+        if (choice == "y" or route_option == "n"):
+            break
+    if (choice == 'y'):
+        disallows_options.append("Toll Road")
+    return disallows_options
+
 # Loop to get user inputs and fetch directions
 while True:
     # Get origin location input
@@ -21,10 +42,34 @@ while True:
     if not dest_list: 
         break
 
+    #Route options
+    while True:
+        route_option = input(
+        "Enter Route Option: \n\
+        'f' - Car quickest drive time route\n\
+        's' - Car shortest driving distance route. \n\
+        'p' - Walking\n\
+        'b' - Bicycling\n")
+        if (route_option == "f" or route_option == "s" or route_option == "p" or route_option == "b"):
+            break
+
+    disallows_options = []
+
+    if (route_option == "f"):
+        route_option = "fastest"
+        carOption(disallows_options)
+    if (route_option == "s"):
+        route_option = "shortest"
+        carOption(disallows_options)
+    if (route_option == "p" ):
+        route_option = "pedestrian"
+    if (route_option == "b" ):
+        route_option = "bicycle"
+
     # Prepare API request
-    url_params = {"key": key, "from": orig}
+    url_params = {"key": key, "from": orig, "routeType":route_option, "disallows":disallows_options}
     for dest in dest_list:
-        url_params["to"] = url_params.get("to", []) + [dest]
+        url_params["to"] = url_params.get("to", []) + [dest]        
 
     # Construct the API request URL
     url = main_api + urllib.parse.urlencode(url_params, doseq=True)
