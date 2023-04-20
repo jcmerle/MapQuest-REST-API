@@ -13,8 +13,8 @@ while True:
     # Get destination inputs
     dest_list = []
     while True:
-        dest = input("Enter Destination (type 'done' when finished): ")
-        if dest == "quit" or dest == "q" or dest == "done":
+        dest = input("Enter Destination (type 'done' or 'd' when finished): ")
+        if dest == "quit" or dest == "q" or dest == "done" or dest == "d":
             break
         dest_list.append(dest)
 
