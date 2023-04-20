@@ -1,4 +1,0 @@
-Additional data: You could add more data to the response, such as the current traffic conditions, weather, or nearby points of interest.
-Multi-stop directions
-Optimization options: You could add options to optimize the route based on various criteria, such as shortest distance, fastest time, or most scenic route.
-Add multiple locations: optimized route GET
