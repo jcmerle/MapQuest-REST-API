@@ -9,9 +9,10 @@ user_avoids_option = []
 user_disallows_options = []
 avoids_option = []
 disallows_options = []
+walkingSpeed = 2.5
 
 def printParams(name, params):
-    print("route type to " + name + " :")
+    print("route type to " + name + ":")
     if params == []:
         print(" - none")
     for elem in params:
@@ -33,46 +34,81 @@ $> ")
     if choice == "2":
         disallows.append(param)
 
-def carBasicConfig():
-    roadConf("Limited access road (highways)", "Limited Access", avoids_option, disallows_options)
-    roadConf("Toll road", "Toll Road", avoids_option, disallows_options)
+def carBasicConfig(avoid, disallows):
+    roadConf("Limited access road (highways)", "Limited Access", avoid, disallows)
+    roadConf("Toll road", "Toll Road", avoid, disallows)
 
-def carExtendedConfig():
-    carBasicConfig()
-    roadConf("Unpaved road", "Unpaved", avoids_option, disallows_options)
-    roadConf("Approximate seasonal closure road", "Approximate Seasonal Closure", avoids_option, disallows_options)
-    roadConf("Tunnel road", "Tunnel", avoids_option, disallows_options)
-    roadConf("Bridge road", "Bridge", avoids_option, disallows_options)
-    roadConf("Country border crossing road", "Country Border Crossing", avoids_option, disallows_options)
+def carExtendedConfig(avoid, disallows):
+    carBasicConfig(avoid, disallows)
+    roadConf("Unpaved road", "Unpaved", avoid, disallows)
+    roadConf("Approximate seasonal closure road", "Approximate Seasonal Closure", avoid, disallows)
+    roadConf("Tunnel road", "Tunnel", avoid, disallows)
+    roadConf("Bridge road", "Bridge", avoid, disallows)
+    roadConf("Country border crossing road", "Country Border Crossing", avoid, disallows)
+
+def carCustomConfig():
+    avoids_option = user_avoids_option
+    disallows_options = user_disallows_options
+
+def customUserConfig():
+    print("[Custom user configuration]")
+    carExtendedConfig(user_avoids_option, user_disallows_options)
+    avoids_option = user_avoids_option
+    disallows_options = user_disallows_options
+
+def printUserConf():
+    print("Current user configuration:")
+    printParams("avoid", user_avoids_option)
+    printParams("disallow", user_disallows_options)
 
 def carOption():
     while True:
-        print("Current user configuration:")
-        if user_avoids_option == [] and user_disallows_options == []:
-            print(" There is no user configuration configured, you can configure it by pressing '4'\n")
-        else:
-            printParams("avoid", user_avoids_option)
-            printParams("disallow", user_disallows_options)
+        printUserConf()
         choice = input("\
 Car route configuration:\n\
     - '0' : No configuration (default)\n\
-    - '1' : User configuration\n\
+    - '1' : Custom user configuration\n\
     - '2' : Basic configuration\n\
     - '3' : Extended configuration\n\
-    - '4' : Configure user configuration\n\
+    - '4' : Define custom user configuration\n\
 $> ")
-        if choice == "0" or choice == "1" or choice == "2" or choice == "":
+        if choice == "0" or choice == "1" or choice == "2" or choice == "3" or choice == "4" or choice == "":
             break
     if choice == "0" or choice == "":
         return
     if choice == "1":
-        return #TODO
+        carCustomConfig()
     if choice == "2":
-        carBasicConfig()
+        carBasicConfig(avoids_option, disallows_options)
     if choice == "3":
-        carExtendedConfig()
-    if choice == "":
-        return #TODO
+        carExtendedConfig(avoids_option, disallows_options)
+    if choice == "4":
+        customUserConfig()
+
+    print("[Your road options]")
+    printParams("avoid", user_avoids_option)
+    printParams("disallow", user_disallows_options)
+
+def walkingConf():
+    while True:
+        global walkingSpeed
+        choice = input("\
+Choose your walking speed:\n\
+    -       '0'      : " + str(walkingSpeed) + " (default)\n\
+    - '[Your value]' : enter a default value up to 0.42 and under 42\n\
+                       you can use a decimal point '.' one number after it (ex: 2.5)\n\
+$> ")
+        if choice == "" or choice == "0":
+            break
+        else:
+            try:
+                temp = float(choice)
+                if temp >= 0.42 and temp <= 42.0:
+                    walkingSpeed = temp
+                    break
+                print("/!\ bad value, please refer to the instruction and try again.")
+            except:
+                print("/!\ bad value, please refer to the instruction and try again.")
 
 def routeOption():
     #Route options
@@ -95,10 +131,11 @@ $> ")
         carOption()
     if choice == "2" :
         route_option = "pedestrian"
+        walkingConf()
     if choice == "3" :
         route_option = "bicycle"
 
-    return (route_option)
+    return route_option
 
 def main():
 
@@ -125,11 +162,11 @@ def main():
             break
 
         route_option = routeOption()
-        printParams("avoid", avoids_option)
-        printParams("disallow", disallows_options)
 
         # Prepare API request "avoids":avoids_option, "disallows":disallows_options
         url_params = {"key": key, "from": orig, "routeType": route_option, "disallows": disallows_options, "avoids": avoids_option}
+        if route_option == "pedestrian":
+            url_params["walkingSpeed"] = walkingSpeed
         for dest in dest_list:
             url_params["to"] = url_params.get("to", []) + [dest]
 
