@@ -49,6 +49,7 @@ while True:
         "size": "600,400@2x",
         "start": orig,
         "end": dest_list[-1],
+        "scalebar": "true|bottom",
         # https://developer.mapquest.com/documentation/static-map-api/v5/getting-started/
         # To add more parameters, change markers, add traffic, etc.
     }
