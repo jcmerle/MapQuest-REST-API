@@ -27,7 +27,7 @@ def unitconf():
             break
         else:
             print("Unit not recognized. Kilometers will be used as default settings.")
-            unit_choice= "m"
+            unit_choice= "k"
             break
 
 def printParams(name, params):
@@ -157,7 +157,9 @@ $> ")
     return route_option
 
 def main():
-
+    
+    # Get units preferences:
+    unitconf()
     # Loop to get user inputs and fetch directions
     while True:
         # Get origin location input
@@ -168,8 +170,6 @@ def main():
             orig = "Washington, D.C."
         # Get destination inputs
         dest_list = []
-        # Get units preferences:
-        unitconf()
         while True:
             dest = input("Enter Destination (type 'done' or 'd' when finished): ")
             if dest == "quit" or dest == "q" or dest == "done" or dest == "d":
