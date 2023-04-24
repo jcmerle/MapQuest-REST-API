@@ -157,11 +157,10 @@ $> ")
     return route_option
 
 def main():
-    
-    # Get units preferences:
-    unitconf()
     # Loop to get user inputs and fetch directions
     while True:
+        # Get units preferences:
+        unitconf()
         # Get origin location input
         orig = input("Starting Location: ")
         if orig == "quit" or orig == "q":
