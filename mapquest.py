@@ -1,6 +1,6 @@
 import urllib.parse
 import requests
-from PIL import Image
+from PIL import Image, ImageFont
 from io import BytesIO
 
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
@@ -13,7 +13,6 @@ def display_map(url):
     response = requests.get(url)
     img = Image.open(BytesIO(response.content))
     img.show()
-    return response
 
 
 # Loop to get user inputs and fetch directions
@@ -79,7 +78,7 @@ while True:
     print("Static Map URL: " + static_map_url)
 
     # Display map
-    map_status = display_map(static_map_url)
+    display_map(static_map_url)
 
     if json_status == 0:
         print("API Status: " + str(json_status) + " = A successful route call.\n")
@@ -104,7 +103,6 @@ while True:
         print("Total Trip Duration: " + "{:02d}:{:02d}:{:02d}".format(total_duration // 3600, (total_duration % 3600) // 60, total_duration % 60))
         print("Total Trip Kilometers: " + str("{:.2f}".format(total_distance))+ "\n")
 
-    
     # Handle other status codes (errors) and print relevant messages        
     elif json_status == 402:
         print("**********************************************")
