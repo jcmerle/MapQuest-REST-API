@@ -43,8 +43,10 @@ while True:
     # Send the API request and parse the JSON response
     json_data = requests.get(url).json()
     json_status = json_data["info"]["statuscode"]
+    # Get the route Id for the map if the request is successful
+    map_session = json_data["route"]["sessionId"] if json_status == 0 else ""
 
-    # Prepare map request
+    # Choose map type, default is "map"
     map_type = input("Enter map type (map, hyb, sat, light, dark): ")
     if map_type == "q" or map_type == "quit":
         break
@@ -52,10 +54,11 @@ while True:
         map_type = "map"
     while map_type not in map_options:
         map_type = input("Invalid map type, try again : ")
-    # Check if there are multiple locations
+    # Check if there are multiple locations and construct map request
     if len(dest_list) > 1:
         static_map_params = {
             "key": key,
+            "sessionId": map_session,
             "size": "600,400@2x",
             "locations":orig + '||' + '||'.join(map(str,dest_list)),
             "defaultMarker":"marker-num",
@@ -66,6 +69,7 @@ while True:
     else:
         static_map_params = {
             "key": key,
+            "sessionId": map_session,
             "size": "600,400@2x",
             "start": orig + "|flag-start",
             "end": dest_list[-1] + "|flag-end",
@@ -77,12 +81,11 @@ while True:
     static_map_url = static_map_api + urllib.parse.urlencode(static_map_params)
     print("Static Map URL: " + static_map_url)
 
-    # Display map
-    display_map(static_map_url)
-
     if json_status == 0:
         print("API Status: " + str(json_status) + " = A successful route call.\n")
         print("=============================================")
+        # Display map
+        display_map(static_map_url)
         
         total_duration = 0  # in seconds
         total_distance = 0  # in km
