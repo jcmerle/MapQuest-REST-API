@@ -1,7 +1,7 @@
 # MapQuest-REST-API: midterm project
 
-*Team: FRENCHEON
-*Class: Software engineering (netacademy)
+*Team: FRENCHEON*
+*Class: Software engineering (netacademy)*
 
 **Subject:** Feature enhancements of the Lab 4.9.2 code by adding user-friendly features to the MapQuest REST API
 
