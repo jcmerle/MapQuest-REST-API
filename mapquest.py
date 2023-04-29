@@ -1,9 +1,13 @@
 import urllib.parse
 import requests
+from PIL import Image, ImageFont
+from io import BytesIO
 
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
+static_map_api = "https://www.mapquestapi.com/staticmap/v5/map?"
+key = "3vVAToG1jRZVLBtLMDdyciN3z2jmpgen"
+map_options = ["map", "dark", "light", "hyb", "sat"]
 key = "s289RKzpSiXWCRJhHUWeQy9AuxwxlY3k"
-
 route_option = ""
 user_avoids_option = []
 user_disallows_options = []
@@ -15,20 +19,12 @@ unit_choice = "k" #by default
 
 def unitconf():
     print("What unit system should be used to display distance?")
-    while True:
-        unit_choice = str(input("Type in 'km' for kilometers or 'mi' for miles.\n"))
-        if unit_choice == "km":
-            print("Unit changed to kilometers.")
-            unit_choice= "k"
-            break
-        if unit_choice == "mi":
-            print("Unit changed to miles.")
-            unit_choice= "m"
-            break
-        else:
-            print("Unit not recognized. Kilometers will be used as default settings.")
-            unit_choice= "k"
-            break
+
+# Display map function
+def display_map(url):
+    response = requests.get(url)
+    img = Image.open(BytesIO(response.content))
+    img.show()
 
 def printParams(name, params):
     print("route type to " + name + ":")
@@ -36,8 +32,7 @@ def printParams(name, params):
         print(" - none")
     for elem in params:
         print(" - " + elem)
-
-
+        
 def roadConf(name, param, avoids, disallows):
     while True:
         choice = input(
@@ -180,7 +175,22 @@ def main():
 
         if not dest_list: 
             break
-
+        while True:
+            unit_choice = str(input("Type in 'km' for kilometers or 'mi' for miles.\n"))
+            if unit_choice == "km":
+                print("Unit changed to kilometers.")
+                unit_choice= "k"
+                break
+            if unit_choice == "mi":
+                print("Unit changed to miles.")
+                unit_choice= "m"
+                break
+            else:
+                print("Unit not recognized. Kilometers will be used as default settings.")
+                unit_choice= "k"
+                break
+        if unit_choice == "quit" or orig == "q":
+            break
         route_option = routeOption()
 
         # Prepare API request "avoids":avoids_option, "disallows":disallows_options
@@ -197,10 +207,50 @@ def main():
         json_data = requests.get(url).json()
         json_status = json_data["info"]["statuscode"]
 
+        # Get the route Id for the map if the request is successful
+        map_session = json_data["route"]["sessionId"] if json_status == 0 else ""
+
+        # Choose map type, default is "map"
+        map_type = input("Enter map type (map, hyb, sat, light, dark): ")
+        if map_type == "q" or map_type == "quit":
+            break
+        elif map_type == "":
+            map_type = "map"
+        while map_type not in map_options:
+            map_type = input("Invalid map type, try again : ")
+        # Check if there are multiple locations and construct map request
+        if len(dest_list) > 1:
+            static_map_params = {
+                "key": key,
+                "sessionId": map_session,
+                "size": "600,400@2x",
+                "locations":orig + '||' + '||'.join(map(str,dest_list)),
+                "defaultMarker":"marker-num",
+                "type": map_type,
+                "scalebar":"true",
+                "traffic":"flow|cons",
+            }
+        else:
+            static_map_params = {
+                "key": key,
+                "sessionId": map_session,
+                "size": "600,400@2x",
+                "start": orig + "|flag-start",
+                "end": dest_list[-1] + "|flag-end",
+                "type": map_type,
+                "scalebar":"true",
+                "traffic":"flow|cons",
+            }
+        # Construct the API request URL
+        static_map_url = static_map_api + urllib.parse.urlencode(static_map_params)
+        print("Static Map URL: " + static_map_url)
+
+
         if json_status == 0:
             print("API Status: " + str(json_status) + " = A successful route call.\n")
             print("=============================================")
-            
+            # Display map
+            display_map(static_map_url)
             total_duration = 0  # in seconds
             total_distance = 0  # in km
             # Loop through each destination and print directions for each leg
