@@ -11,6 +11,25 @@ avoids_option = []
 disallows_options = []
 walkingSpeed = 2.5
 
+unit_choice = "k" #by default
+
+def unitconf():
+    print("What unit system should be used to display distance?")
+    while True:
+        unit_choice = str(input("Type in 'km' for kilometers or 'mi' for miles.\n"))
+        if unit_choice == "km":
+            print("Unit changed to kilometers.")
+            unit_choice= "k"
+            break
+        if unit_choice == "mi":
+            print("Unit changed to miles.")
+            unit_choice= "m"
+            break
+        else:
+            print("Unit not recognized. Kilometers will be used as default settings.")
+            unit_choice= "k"
+            break
+
 def printParams(name, params):
     print("route type to " + name + ":")
     if params == []:
@@ -138,9 +157,10 @@ $> ")
     return route_option
 
 def main():
-
     # Loop to get user inputs and fetch directions
     while True:
+        # Get units preferences:
+        unitconf()
         # Get origin location input
         orig = input("Starting Location: ")
         if orig == "quit" or orig == "q":
@@ -164,7 +184,7 @@ def main():
         route_option = routeOption()
 
         # Prepare API request "avoids":avoids_option, "disallows":disallows_options
-        url_params = {"key": key, "from": orig, "routeType": route_option, "disallows": disallows_options, "avoids": avoids_option}
+        url_params = {"key": key, "from": orig, "routeType": route_option, "unit": unit_choice, "disallows": disallows_options, "avoids": avoids_option}
         if route_option == "pedestrian":
             url_params["walkingSpeed"] = walkingSpeed
         for dest in dest_list:
