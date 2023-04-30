@@ -13,6 +13,11 @@ Application that retrieves JSON data from the MapQuest Directions API, parses th
 - [✓] Review code - 12224987
 - [✓] Make presentation (code comments + presentation structure + step-by-step presentation of project evolution) - 12224987
 - [✓] Merging + checking members' merge - 12224987
+- [✓] Bicycle Option - 12224965
+- [✓] Pedestriant Option - 12224965
+- [✓] Car Option - 12224965
+- [✓] Car Option Configuration - 12224965
+- [✓] Car Option User Saving Configuration - 12224965
 - [✓] Merging map display to main - 12224918
 - [✓] Add geocoding - 12224867
 - [✓] Show coordinates for simple and multi destinations - 12224867
