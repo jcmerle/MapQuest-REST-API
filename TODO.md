@@ -13,4 +13,7 @@ Application that retrieves JSON data from the MapQuest Directions API, parses th
 - [✓] Review code - 12224987
 - [✓] Make presentation (code comments + presentation structure + step-by-step presentation of project evolution) - 12224987
 - [✓] Merging + checking members' merge - 12224987
-- [✓] Merge everything - 12224918
+- [✓] Add geocaching - 12224867
+- [✓] Show coordinates for simple and multi destinations - 12224867
+- [✓] Add possibility to search for route from coordinates - 12224867
+- [✓] Merge branch - 12224867
