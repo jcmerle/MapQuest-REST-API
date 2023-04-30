@@ -4,6 +4,7 @@ Application that retrieves JSON data from the MapQuest Directions API, parses th
 ### Work in progress
 
 ### Completed ✓
+- [✓] Multi directions - 12224870
 - [✓] Added Star & End location on map - 12224918
 - [✓] Added traffic and construction on map - 12224918
 - [✓] Different display according to number of locations - 12224918
