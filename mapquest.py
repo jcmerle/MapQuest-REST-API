@@ -156,12 +156,17 @@ def main():
     while True:
         # Get units preferences:
         unitconf()
+        type_of_input = input("name for using place's name or coordinates to using coordinate of places (lat, longitude)\n")
+        if type_of_input != "name" and type_of_input != "coordinates":
+            print("you need to choose between name or coordinates")
+            break
         # Get origin location input
         orig = input("Starting Location: ")
         if orig == "quit" or orig == "q":
             break
         if orig == "":
             orig = "Washington, D.C."
+
         # Get destination inputs
         dest_list = []
         while True:
@@ -193,6 +198,8 @@ def main():
             break
         route_option = routeOption()
 
+
+
         # Prepare API request "avoids":avoids_option, "disallows":disallows_options
         url_params = {"key": key, "from": orig, "routeType": route_option, "unit": unit_choice, "disallows": disallows_options, "avoids": avoids_option}
         if route_option == "pedestrian":
@@ -200,12 +207,29 @@ def main():
         for dest in dest_list:
             url_params["to"] = url_params.get("to", []) + [dest]
 
+        # Prepare geocoding API request
+        url_origin = {"key": key, "location": orig}
+        url_dest = {"key": key, "location": dest}
+
         # Construct the API request URLs
         url = main_api + urllib.parse.urlencode(url_params, doseq=True)
         print("URL: " + (url))
         # Send the API request and parse the JSON response
         json_data = requests.get(url).json()
         json_status = json_data["info"]["statuscode"]
+        print(url_origin)
+        # Get coordinates by city name and print it
+        if type_of_input == "name":
+            print("first dest", url_dest)
+            json_geocoding = requests.get('https://www.mapquestapi.com/geocoding/v1/address?' + urllib.parse.urlencode(url_origin,doseq=True)).json()
+            json_geocoding2 = requests.get('https://www.mapquestapi.com/geocoding/v1/address?' + urllib.parse.urlencode(url_dest,doseq=True)).json()
+            json_origin_lng = json_geocoding["results"][0]["locations"][0]["latLng"]["lng"]
+            json_origin_lat = json_geocoding["results"][0]["locations"][0]["latLng"]["lat"]
+            json_dest_lng = json_geocoding2["results"][0]["locations"][0]["latLng"]["lng"]
+            json_dest_lat = json_geocoding2["results"][0]["locations"][0]["latLng"]["lat"]
+
+            print("Longitude of origin: " + str(json_origin_lng) + ", Latitude of origin: " + str(json_origin_lat))
+            print("Longitude of final dest: " + str(json_dest_lng) + ", Latitude of dest: " + str(json_dest_lat))
 
         # Get the route Id for the map if the request is successful
         map_session = json_data["route"]["sessionId"] if json_status == 0 else ""
@@ -246,6 +270,7 @@ def main():
         print("Static Map URL: " + static_map_url)
 
 
+
         if json_status == 0:
             print("API Status: " + str(json_status) + " = A successful route call.\n")
             print("=============================================")
@@ -265,11 +290,27 @@ def main():
                 print("=============================================\n")
                 # Add the leg duration and distance to the total trip duration and distance
                 total_duration += leg["time"] 
-                total_distance += leg["distance"] * 1.61  
+                total_distance += leg["distance"] * 1.61
+
+            # print coordinates of destinations if name inputted
+            if type_of_input == "name":
+                a = 1
+                for i, (dest) in enumerate(zip(dest_list)):
+                    url_dest = {"key": key, "location": dest}
+                    json_geocoding3 = requests.get(
+                        'https://www.mapquestapi.com/geocoding/v1/address?' + urllib.parse.urlencode(url_dest,
+                                                                                                     doseq=True)).json()
+                    json_dest_lng = json_geocoding3["results"][0]["locations"][0]["latLng"]["lng"]
+                    json_dest_lat = json_geocoding3["results"][0]["locations"][0]["latLng"]["lat"]
+                    print("Longitude of dest n°" + str(a) + ": " + str(json_dest_lng) + ", Latitude of dest: " + str(
+                        json_dest_lat))
+                    a = a + 1
             # Print the total trip duration and distance    
             print("Total Trip Duration: " + "{:02d}:{:02d}:{:02d}".format(total_duration // 3600, (total_duration % 3600) // 60, total_duration % 60))
             print("Total Trip Kilometers: " + str("{:.2f}".format(total_distance))+ "\n")
-        
+
+
+
         # Handle other status codes (errors) and print relevant messages        
         elif json_status == 402:
             print("**********************************************")
@@ -287,3 +328,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
