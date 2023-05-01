@@ -17,9 +17,6 @@ walkingSpeed = 2.5
 
 unit_choice = "k" #by default
 
-def unitconf():
-    print("What unit system should be used to display distance?")
-
 # Display map function
 def display_map(url):
     response = requests.get(url)
@@ -27,7 +24,7 @@ def display_map(url):
     img.show()
 
 def printParams(name, params):
-    print("route type to " + name + ":")
+    print("Route type to " + name + ":")
     if params == []:
         print(" - none")
     for elem in params:
@@ -155,8 +152,7 @@ def main():
     # Loop to get user inputs and fetch directions
     while True:
         # Get units preferences:
-        unitconf()
-        type_of_input = input("name for using place's name or coordinates to using coordinate of places (lat, longitude)\n")
+        type_of_input = input("Type 'name' to search the name of a city or 'coordinates' to search the coordinates of the place (lat, longitude)\n")
         if type_of_input != "name" and type_of_input != "coordinates":
             print("you need to choose between name or coordinates")
             break
