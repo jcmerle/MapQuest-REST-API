@@ -4,7 +4,10 @@ Application that retrieves JSON data from the MapQuest Directions API, parses th
 ### Work in progress
 
 ### Completed ✓
-- [✓] Multi directions - 12224870
+- [✓] Multi destinations - 12224870
+- [✓] Construct URL for a basic map - 12224870
+- [✓] Function to display the map - 12224870
+- [✓] Final review of the code - 12224987
 - [✓] Added Star & End location on map - 12224918
 - [✓] Added traffic and construction on map - 12224918
 - [✓] Different display according to number of locations - 12224918
@@ -14,7 +17,7 @@ Application that retrieves JSON data from the MapQuest Directions API, parses th
 - [✓] Make presentation (code comments + presentation structure + step-by-step presentation of project evolution) - 12224987
 - [✓] Merging + checking members' merge - 12224987
 - [✓] Bicycle Option - 12224965
-- [✓] Pedestriant Option - 12224965
+- [✓] Pedestrian Option - 12224965
 - [✓] Car Option - 12224965
 - [✓] Car Option Configuration - 12224965
 - [✓] Car Option User Saving Configuration - 12224965
